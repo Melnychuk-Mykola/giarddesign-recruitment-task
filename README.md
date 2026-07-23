@@ -7,9 +7,7 @@ zawierała.
 
 ## Demo
 
-[Zobacz stronę online](https://twoj-adres-wdrozenia)
-
-<!-- Po wdrożeniu zastąp powyższy adres publicznym URL z Vercel / Netlify. -->
+[Zobacz stronę online](https://giarddesign-recruitment-task.vercel.app)
 
 ## Technologie
 
