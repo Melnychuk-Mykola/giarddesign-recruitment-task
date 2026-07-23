@@ -55,11 +55,11 @@ export function Hero() {
                 aria-roledescription="slajd"
                 aria-label={`${slideIndex + 1} z ${heroSlides.length}`}
                 aria-hidden={!active}
-                className={`col-start-1 row-start-1 transition-[opacity,transform] duration-500 ease-smooth ${
+                className={`col-start-1 row-start-1 min-w-0 transition-[opacity,transform] duration-500 ease-smooth ${
                   active ? 'opacity-100' : 'invisible translate-y-3 opacity-0'
                 }`}
               >
-                <h1 className="font-display text-h1 font-medium">
+                <h1 className="font-display text-h1 font-medium hyphens-auto break-words">
                   {slide.headline.map((line) => (
                     <span key={line} className="block">
                       {line}{' '}
