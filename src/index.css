@@ -1,0 +1,104 @@
+@import '@fontsource-variable/montserrat/wght.css';
+@import '@fontsource-variable/montserrat/wght-italic.css';
+@import '@fontsource-variable/inter/wght.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply bg-white font-sans text-base text-ink antialiased;
+  }
+
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-green;
+  }
+
+  /* Two sections sit on green or black, where a green focus ring disappears. */
+  .on-dark :focus-visible {
+    @apply outline-cream;
+  }
+}
+
+@layer components {
+  /* Figma keeps the page on a 1440 frame with 89px margins (1262 content).
+     Expressing the gutter as a percentage holds that ratio at every width
+     without a breakpoint ladder — 6.1806% of 1440 is exactly 89px. */
+  .wrap {
+    padding-inline: clamp(1.25rem, 6.1806%, 200px);
+  }
+
+  /* Narrower column used by the Oferta heading, Instagram card and footer
+     (1040 content / 200px margins at 1440). */
+  .wrap-narrow {
+    padding-inline: clamp(1.25rem, 6.1806%, 200px);
+  }
+
+  /* Realizacje heading sits on 160px margins at 1440. */
+  .wrap-mid {
+    padding-inline: clamp(1.25rem, 6.1806%, 200px);
+  }
+
+  @media (min-width: 1024px) {
+    .wrap-narrow {
+      padding-inline: clamp(3rem, 13.8889%, 280px);
+    }
+
+    .wrap-mid {
+      padding-inline: clamp(3rem, 11.1111%, 240px);
+    }
+  }
+}
+
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .reveal-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Photos wipe up instead of fading, which matches how the layout stacks
+     image blocks against flat colour. */
+  .reveal-mask {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .reveal-mask.reveal-in {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .reveal-mask {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+}
