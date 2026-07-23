@@ -1,6 +1,6 @@
 @import '@fontsource-variable/montserrat/wght.css';
-@import '@fontsource-variable/montserrat/wght-italic.css';
 @import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/inter/wght-italic.css';
 
 @tailwind base;
 @tailwind components;
@@ -53,6 +53,49 @@
     .wrap-mid {
       padding-inline: clamp(3rem, 11.1111%, 240px);
     }
+  }
+
+  /* Figma sets the accented word of a section heading in the body face —
+     Inter Medium Italic — against Montserrat Medium for the rest. */
+  .heading-accent {
+    @apply font-sans font-medium italic tracking-normal;
+  }
+
+  /* Column and gutter sizes for the Realizacje gallery. Masonry measures the
+     two sizer elements on every layout, so the media queries below are all it
+     needs to switch between 3, 2 and 1 column. */
+  .masonry {
+    --masonry-columns: 1;
+    --masonry-gutter: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .masonry {
+      --masonry-columns: 2;
+      --masonry-gutter: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .masonry {
+      --masonry-columns: 3;
+      --masonry-gutter: 43px;
+    }
+  }
+
+  .masonry-sizer,
+  .masonry-item {
+    width: calc((100% - (var(--masonry-columns) - 1) * var(--masonry-gutter)) / var(--masonry-columns));
+  }
+
+  /* Masonry's gutter option only spaces the columns; the rows are spaced by the
+     item's own bottom margin, which Masonry measures as part of its size. */
+  .masonry-item {
+    margin-bottom: var(--masonry-gutter);
+  }
+
+  .masonry-gutter-sizer {
+    width: var(--masonry-gutter);
   }
 }
 

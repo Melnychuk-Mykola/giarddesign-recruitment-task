@@ -1,6 +1,7 @@
 import { useEffect, useRef, type PointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import type { Photo } from '../data/site';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 import { CloseIcon, SliderArrow } from './icons';
 
 const SWIPE_THRESHOLD = 48;
@@ -33,26 +34,15 @@ export function Lightbox({ photos, index, onIndexChange, onClose }: LightboxProp
     };
   }, []);
 
+  useFocusTrap(true, dialogRef);
+
   useEffect(() => {
     const step = (direction: number) => onIndexChange((index + direction + photos.length) % photos.length);
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') return onClose();
-      if (event.key === 'ArrowLeft') return step(-1);
-      if (event.key === 'ArrowRight') return step(1);
-      if (event.key !== 'Tab') return;
-
-      const focusable = dialogRef.current?.querySelectorAll<HTMLElement>('button');
-      if (!focusable?.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      if (event.key === 'Escape') onClose();
+      if (event.key === 'ArrowLeft') step(-1);
+      if (event.key === 'ArrowRight') step(1);
     };
 
     document.addEventListener('keydown', onKeyDown);

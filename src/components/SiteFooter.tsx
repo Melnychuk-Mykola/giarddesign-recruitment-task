@@ -4,7 +4,7 @@ import { Logo } from './Logo';
 
 export function SiteFooter() {
   return (
-    <footer id="kontakt" className="on-dark scroll-mt-20 bg-ink py-14 text-cream lg:py-20">
+    <footer id="kontakt" className="on-dark scroll-mt-[72px] bg-ink py-14 text-cream lg:py-20">
       <div className="wrap-narrow">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <Logo className="h-[19px] w-[114px]" />

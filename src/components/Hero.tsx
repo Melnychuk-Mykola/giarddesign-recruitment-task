@@ -35,7 +35,7 @@ export function Hero() {
   return (
     <section
       id="start"
-      className="relative bg-beige lg:min-h-[737px]"
+      className="relative scroll-mt-[72px] bg-beige lg:min-h-[737px]"
       aria-roledescription="carousel"
       aria-label="Prezentacja oferty"
       onKeyDown={onKeyDown}

@@ -7,7 +7,12 @@ export function About() {
   const ref = useReveal<HTMLElement>();
 
   return (
-    <section id="o-firmie" ref={ref} aria-labelledby="o-firmie-tytul" className="on-dark relative bg-green text-cream">
+    <section
+      id="o-firmie"
+      ref={ref}
+      aria-labelledby="o-firmie-tytul"
+      className="on-dark relative scroll-mt-[72px] bg-green text-cream"
+    >
       <div
         data-reveal
         className="reveal-mask relative aspect-[4/3] sm:aspect-[16/10] lg:absolute lg:inset-y-0 lg:left-0 lg:aspect-auto lg:w-[47.7778%]"
@@ -23,8 +28,10 @@ export function About() {
         {/* 39.86% of the 1262 grid is the 503px column that starts at x=848. */}
         <div className="reveal lg:ml-auto lg:w-[46%] xl:w-[39.86%]" data-reveal>
           <p className="text-caption">O firmie</p>
+          {/* Figma breaks both accented headings by hand, before the accent. */}
           <h2 id="o-firmie-tytul" className="mt-4 font-display text-h2 font-medium">
-            Tworzymy <em>z pasją</em>
+            Tworzymy <br />
+            <em className="heading-accent">z pasją</em>
           </h2>
           <p className="mt-8 lg:mt-10">
             Każdy projekt to nowe wyzwanie. Dlatego nasz zespół tworzą wykwalifikowani projektanci oraz architekci,

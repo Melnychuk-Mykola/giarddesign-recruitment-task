@@ -5,8 +5,11 @@ import { Projects } from './components/Projects';
 import { Services } from './components/Services';
 import { SiteFooter } from './components/SiteFooter';
 import { SiteHeader } from './components/SiteHeader';
+import { useInitialHash } from './hooks/useInitialHash';
 
 export default function App() {
+  useInitialHash();
+
   return (
     <>
       <a

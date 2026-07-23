@@ -15,10 +15,15 @@ Pozostałe polecenia: `npm run build`, `npm run preview`, `npm run lint`.
 
 ## Stack
 
-React 19 + TypeScript + Vite + Tailwind CSS. Jedyna dodatkowa zależność to `@fontsource-variable`
-(Montserrat i Inter) — kroje są hostowane lokalnie, więc strona nie wysyła zapytań do zewnętrznych
-domen. Slider, masonry i lightbox są napisane ręcznie; każdy z nich to kilkadziesiąt linii, a gotowe
-biblioteki dawałyby mniej kontroli nad animacją, obsługą klawiatury i dostępnością niż same wnoszą.
+React 19 + TypeScript + Vite + Tailwind CSS.
+
+Zależności produkcyjne to `masonry-layout` oraz `@fontsource-variable` (Montserrat i Inter). Kroje są
+hostowane lokalnie, więc strona nie wysyła zapytań do zewnętrznych domen. Galeria Realizacji stoi na
+`masonry-layout` — bibliotece wskazanej w zadaniu. Jej tryb `horizontalOrder` układa kafelki
+kolumnami w kolejności DOM, dzięki czemu jeden płaski, sekwencyjny DOM daje jednocześnie siatkę
+z Figmy, naturalną kolejność czytania i poprawną kolejność tabulacji. Slider i lightbox pozostały
+własne — to po kilkadziesiąt linii, a gotowe biblioteki dawałyby mniej kontroli nad animacją,
+obsługą klawiatury i dostępnością niż same wnoszą.
 
 ## Struktura
 
@@ -26,7 +31,7 @@ biblioteki dawałyby mniej kontroli nad animacją, obsługą klawiatury i dostę
 src/
   components/   sekcje strony (SiteHeader, Hero, Services, About, Projects, Instagram, SiteFooter)
                 + elementy wspólne (Button, Lightbox, ResponsiveImage, Logo, icons)
-  hooks/        useReveal, useDismiss, useSiteSearch
+  hooks/        useReveal, useDismiss, useSiteSearch, useFocusTrap, useInitialHash
   data/site.ts  treści, zdjęcia i indeks wyszukiwarki
 public/images/  zdjęcia w WebP w trzech szerokościach (480 / 960 / 1600)
 ```
@@ -54,10 +59,11 @@ ma zapisane zastępstwo Montserrat + Inter i taki zestaw jest tu użyty; kursywa
   Obsługa strzałkami na ekranie, klawiszami ← →, oraz swipe na dotyku.
 - **Oferta** — całe karty są klikalne (link rozciągnięty pseudo-elementem, jeden stop tabulacji),
   hover unosi kartę i przesuwa strzałkę.
-- **Realizacje** — masonry z trzech kolumn (2 na tablecie, 1 na telefonie); lista jest rozdzielana
-  round-robin, co przy trzech kolumnach odtwarza układ z Figmy co do piksela. `Rozwiń` płynnie
-  dopowiada pozostałe realizacje, kliknięcie zdjęcia otwiera lightbox ze strzałkami, obsługą
-  klawiatury, pułapką fokusu i blokadą przewijania strony.
+- **Realizacje** — `masonry-layout` w trzech kolumnach (2 na tablecie, 1 na telefonie); szerokość
+  kolumny i odstęp podają dwa elementy pomiarowe sterowane media queries, więc biblioteka sama
+  przelicza układ po zmianie szerokości okna. `Rozwiń` płynnie dopowiada pozostałe realizacje,
+  kliknięcie zdjęcia otwiera lightbox ze strzałkami, obsługą klawiatury, pułapką fokusu i blokadą
+  przewijania strony.
 
 ## Świadome odstępstwa od makiety
 
@@ -77,5 +83,10 @@ Zdjęcia są konwertowane do WebP i podawane przez `srcset`/`sizes`; każdy kafe
 boków, więc nie ma przesunięć układu. Zdjęcia poniżej pierwszego ekranu ładują się leniwie, kod
 lightboxa doładowuje się dopiero przy otwarciu galerii. Sekcje pojawiają się przy przewijaniu,
 zdjęcia wjeżdżają maską; wszystkie animacje wyłącza `prefers-reduced-motion`.
+
+Otwarte menu mobilne oznacza `main` i `footer` atrybutem `inert` i zamyka tabulację w obrębie
+nagłówka, a przejście powyżej 1024 px zamyka je samo, żeby blokada przewijania nie została na
+stronie. Wejście prosto na adres z hashem (`/#realizacje`) dojeżdża do sekcji po pierwszym
+renderze — sekcje i karty mają `scroll-margin-top` pod przyklejony nagłówek.
 
 Zdjęcia pochodzą z Unsplash — to te same pliki, które są osadzone w makiecie.

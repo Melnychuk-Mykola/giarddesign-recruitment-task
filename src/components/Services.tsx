@@ -11,13 +11,13 @@ export function Services() {
       id="oferta"
       ref={ref}
       aria-labelledby="oferta-tytul"
-      className="bg-cream pb-20 pt-20 lg:pb-[160px] lg:pt-[120px]"
+      className="scroll-mt-[72px] bg-cream pb-20 pt-20 lg:pb-[160px] lg:pt-[120px]"
     >
       <div className="wrap-narrow reveal" data-reveal>
         <p className="text-caption text-green">Oferta</p>
         <div className="mt-4 max-w-[709px]">
           <h2 id="oferta-tytul" className="font-display text-h2 font-medium">
-            Działamy <em>kompleksowo</em>
+            Działamy <em className="heading-accent">kompleksowo</em>
           </h2>
           <p className="mt-6 lg:mt-8">
             Oferujemy kompletną obsługę inwestycji terenów zielonych. Projektujemy nowoczesne ogrody przydomowe oraz

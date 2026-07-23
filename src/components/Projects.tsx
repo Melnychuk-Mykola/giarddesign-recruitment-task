@@ -1,4 +1,5 @@
-import { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import Masonry from 'masonry-layout';
+import { Suspense, lazy, useLayoutEffect, useRef, useState } from 'react';
 import { COLLAPSED_PROJECTS, projects, type Photo } from '../data/site';
 import { useReveal } from '../hooks/useReveal';
 import { buttonClass } from './buttonStyles';
@@ -8,59 +9,64 @@ import { ArrowDown } from './icons';
 // The gallery overlay is only needed once a photo is clicked.
 const Lightbox = lazy(() => import('./Lightbox').then((module) => ({ default: module.Lightbox })));
 
-const columnsFor = (width: number) => (width >= 1024 ? 3 : width >= 640 ? 2 : 1);
-
-/** Dealing the list round-robin into N columns rebuilds the Figma grid at N=3. */
-function toColumns<T>(items: T[], count: number) {
-  const columns: T[][] = Array.from({ length: count }, () => []);
-  items.forEach((item, index) => columns[index % count].push(item));
-  return columns;
-}
-
 export function Projects() {
   const [expanded, setExpanded] = useState(false);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [columnCount, setColumnCount] = useState(() => columnsFor(window.innerWidth));
   const [gridHeight, setGridHeight] = useState<number>();
 
   const gridRef = useRef<HTMLDivElement>(null);
+  const masonryRef = useRef<Masonry | null>(null);
   const visible = expanded ? projects : projects.slice(0, COLLAPSED_PROJECTS);
   const sectionRef = useReveal<HTMLElement>(visible.length);
 
-  useEffect(() => {
-    const onResize = () => setColumnCount(columnsFor(window.innerWidth));
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
-  // The wrapper height is driven by the grid so it can animate open; the observer
-  // also keeps it in sync when the column count or viewport changes.
   useLayoutEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
-    const measure = () => setGridHeight(grid.getBoundingClientRect().height);
-    measure();
-    const observer = new ResizeObserver(measure);
+
+    // horizontalOrder deals the items across the columns in DOM order, which is
+    // both the reading order of the mockup and the tab order of the gallery.
+    const masonry = new Masonry(grid, {
+      itemSelector: '.masonry-item',
+      columnWidth: '.masonry-sizer',
+      gutter: '.masonry-gutter-sizer',
+      percentPosition: true,
+      horizontalOrder: true,
+      transitionDuration: 0,
+    });
+    masonryRef.current = masonry;
+
+    // Masonry writes the container height; the wrapper follows it so opening
+    // and closing the gallery can be animated. The container also carries the
+    // bottom margin of the last row, which is trimmed back off here.
+    const observer = new ResizeObserver(() => {
+      const rowGap = grid.querySelector('.masonry-gutter-sizer')?.getBoundingClientRect().width ?? 0;
+      setGridHeight(grid.getBoundingClientRect().height - rowGap);
+    });
     observer.observe(grid);
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+      masonry.destroy?.();
+      masonryRef.current = null;
+    };
   }, []);
 
-  const columns = toColumns(
-    visible.map((photo, index) => ({ photo, index })),
-    columnCount,
-  );
+  useLayoutEffect(() => {
+    masonryRef.current?.reloadItems?.();
+    masonryRef.current?.layout?.();
+  }, [visible.length]);
 
   return (
     <section
       id="realizacje"
       ref={sectionRef}
       aria-labelledby="realizacje-tytul"
-      className="scroll-mt-20 bg-beige pb-16 pt-20 lg:pb-11 lg:pt-[120px]"
+      className="scroll-mt-[72px] bg-beige pb-16 pt-20 lg:pb-11 lg:pt-[120px]"
     >
       <div className="wrap-mid reveal" data-reveal>
         <p className="text-caption text-green">Realizacje</p>
         <h2 id="realizacje-tytul" className="mt-4 font-display text-h2 font-medium">
-          Nasze <em>projekty</em>
+          Nasze <em className="heading-accent">projekty</em>
         </h2>
       </div>
 
@@ -70,13 +76,11 @@ export function Projects() {
           className="overflow-hidden transition-[height] duration-500 ease-smooth"
           style={{ height: gridHeight }}
         >
-          <div ref={gridRef} className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-[43px]">
-            {columns.map((column, columnIndex) => (
-              <div key={columnIndex} className="flex flex-col gap-3 sm:gap-6 lg:gap-[43px]">
-                {column.map(({ photo, index }) => (
-                  <ProjectTile key={photo.src} photo={photo} onOpen={() => setOpenIndex(index)} />
-                ))}
-              </div>
+          <div ref={gridRef} className="masonry">
+            <div className="masonry-sizer" aria-hidden="true" />
+            <div className="masonry-gutter-sizer" aria-hidden="true" />
+            {visible.map((photo, index) => (
+              <ProjectTile key={photo.src} photo={photo} onOpen={() => setOpenIndex(index)} />
             ))}
           </div>
         </div>
@@ -118,7 +122,7 @@ function ProjectTile({ photo, onOpen }: { photo: Photo; onOpen: () => void }) {
       type="button"
       onClick={onOpen}
       data-reveal
-      className="reveal-mask group relative block w-full overflow-hidden"
+      className="masonry-item reveal-mask group relative block overflow-hidden"
       style={{ aspectRatio: `${photo.width} / ${photo.height}` }}
       aria-label={`Powiększ zdjęcie: ${photo.alt}`}
     >
